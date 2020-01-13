@@ -54,7 +54,7 @@ print(x)
 w = paste0(x,y,z)
 print(w)
 
-z = paste(x,y,z)
+w = paste(x,y,z)
 print(w)
 
 
