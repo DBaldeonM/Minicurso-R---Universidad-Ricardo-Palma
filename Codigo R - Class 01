@@ -1,0 +1,232 @@
+
+## ---------------------------------------------- ##
+##   Author: Mg. Dante Baldeon Molleda            ##
+##   Email: d.baldeon@pucp.edu.pe                 ##
+##   Abstrac: Minicurso De R, Programación y      ##
+##            visualización de datos - CLASE 01   ##
+##                                                ##
+##   Date: 13/01/2020                             ##
+## ---------------------------------------------- ##
+ 
+
+
+#### ------------------------------------------ ####
+#### Tipos de variables en R                    ####
+#### ------------------------------------------ ####
+
+#### BOOLEANO
+x = F ## F: FALSE
+y = T ## T: TRUE
+
+x & y
+x | y 
+!(x | y)
+isFALSE(x)
+
+
+#### NUMERIC
+x = 5
+y = 12
+
+x+y
+x*y
+x/y
+y%/%x
+sqrt(x) ## raiz cuadrada
+sin(x) ## funcion seno
+exp(x) ## funcion exp
+
+#### COMPLEX
+x = 1 + 2i
+y = 4 + 3i
+
+x + y
+x * y
+sin(x)
+
+
+#### CHARACTER
+x = "Hola"
+y = " y bien venidos"
+z = " al minicurso de R"
+
+print(x)
+w = paste0(x,y,z)
+print(w)
+
+z = paste(x,y,z)
+print(z)
+
+
+
+#### ------------------------------------------ ####
+#### Tipos de objetos en R                      ####
+#### ------------------------------------------ ####
+
+#### VECTOR
+nun1 = c(1, 2, 4, 7) ## Numeric
+nun2 = c(4, 8, 7, 9)
+
+bool1 = c(F, T, F, F) ## Booleano
+bool2 = c(T, T, T, F)
+
+char1 = c("A", "BC", "DEF", "GHIJ") ## Character
+
+nun3 = nun1 + nun2
+sum(nun3)
+median(nun3)
+
+max(nun3)
+min(nun3)
+exp(nun3)
+
+summary(nun3)
+!bool1
+bool1 & bool2
+bool1 | bool2
+
+paste0(char1, collapse="")
+
+
+
+#### MATRIX
+mat1 = matrix(1:6, nrow=3)
+dim(mat1)
+mat2 = matrix(seq(from=6, to=8.5, by=0.5), nrow=3)
+dim(mat2)
+mat3 = matrix(rep(x=5, times=6), nrow=2)
+dim(mat3)
+mat1 + mat2
+mat1 * mat2
+
+dim(mat1)
+dim(mat3)
+mat1 %*% mat3
+
+
+
+#### LIST
+x = 2 + 5i
+y = c(1, 2, 3, 8)
+z = matrix(rep(x=5, times=6), nrow=2)
+
+list1 = list(x, y , z)
+list1[[1]]
+list1[[2]]
+list1[[3]]
+
+names(list1)
+
+names(list1) = c("complex", "array", "matrix")
+names(list1)
+
+list1
+list1$complex
+list1$array
+list1$matrix
+
+
+
+#### DATA FRAME
+nombres = c("Robert", "Anibal", "Maria", "Carmen", "Luis", "Rafael", "Valeria")
+apellido_P = c("Flores", "Sanchez", "Vasquez", "Huaman", "Valdivia", "Villogas", "Avalos")
+apellido_M = c("Alva", "Semanche", "Laos", "Alvites", "Fisher", "Nique", "Gutierrez")
+sueldos = c(2500.5, 2210.3, 2720.2, 2364.4, 2500.5, 5150.1, 1204.2)
+sector = c("A", "A", "B", "A", "B", "A", "B")
+
+df1 = data.frame(nombres, apellido_P, apellido_M, sueldos, sector)
+
+df1[2,]
+
+df1[, "sueldos"]
+df1$sueldos
+sum(df1$sueldos)
+mean(df1$sueldos)
+
+df1$nombre_completo = paste0(df1$apellido_P, " ",  df1$apellido_M, ", ", df1$nombres)
+
+
+
+
+#### ------------------------------------------ ####
+#### Condicionales y bucles en R                ####
+#### ------------------------------------------ ####
+
+# ## Syntax of for loop
+# for(value in sequence){
+#   body
+# }
+
+for (k in 1:10) {
+  print(paste(5, '*' , k , '=' , 5*k))
+}
+
+
+
+# ## Syntax of while Loop
+# while(condition) {
+#   block of code
+# }
+
+x = 1
+while ( x <= 10 ) {
+  print(paste(5, '*' , x , '=' , 5*x))
+  x = x+1
+}
+
+
+
+# ## Syntax of if-else
+# if (condition) {
+#   cuando se cumple la condicion
+# }else{
+#   cuando no se cumple la condicion
+# }
+
+
+score = 25
+if( score>=50 ){
+  print("El alumno aprobó el curso")
+}else{
+  print("El alumno desaprobó el curso")
+}
+
+
+# ## ifelse() function syntax
+# ifelse(logical_expression, True, False)
+
+
+score = c(77,35,89,100,45,67,50)
+ifelse(score >= 50, "Pass", "Fail")
+
+
+df1$gana_mas_promedio = ifelse( df1$sueldos>mean(df1$sueldos), TRUE, FALSE)
+
+
+write.csv(df1, "lista de trabajadores.csv")
+
+getwd()
+setwd("C:/Users/docente/Desktop/Proyecto URP/CLASE 01")
+
+write.csv(df1, "data/lista de trabajadores.csv")
+
+hist(df1$sueldos, xlab="Sueldo", ylab="Frecuencia", main="Histograma de sueldos")
+boxplot(sueldos~sector, df1)
+
+install.packages("openxlsx")
+library(openxlsx)
+
+?openxlsx
+write.xlsx(df1, "data/lista de trabajadores.xlsx")
+
+df1[df1$sector=="A",]
+df1[df1$sector=="B",]
+list2 = list(df1, df1[df1$sector=="A",], df1[df1$sector=="B",])
+
+write.xlsx(list2, "data/lista de trabajadores clsificado.xlsx")
+
+
+x = rnorm(1000, mean=5, sd=5)
+hist(x)
+summary(x)
+boxplot(x)
