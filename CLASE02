@@ -1,0 +1,188 @@
+
+## ---------------------------------------------- ##
+##   Author: Mg. Dante Baldeon Molleda            ##
+##   Email: d.baldeon@pucp.edu.pe                 ##
+##   Abstrac: Minicurso De R, Programación y      ##
+##            visualización de datos - CLASE 02   ##
+##                                                ##
+##   Date: 14/01/2020                             ##
+## ---------------------------------------------- ##
+
+## Obtenemos el directorio de trabajo
+getwd()
+
+
+## Establecemos el nuevo directorio de trabajo
+setwd("C:\\Users\\ASUS\\Desktop\\R, programacion y visualizacion")
+getwd()
+
+
+## Paquete para lectura de archivos .sav
+install.packages("foreign")
+library(foreign)
+
+SUSALUD_2015 = read.spss("CUESTIONARIO 02 - CAPITULOS.sav", to.data.frame=TRUE)
+dim(SUSALUD_2015)
+names(SUSALUD_2015)
+
+# ## VARIABLES DE INTERES
+# DEPARTAMENTO: NOMBRE DE DEPARTAMENTO
+# PROVINCIA: NOMBRE DE PROVINCIA
+# INSTITUCION: Institución
+# C1CONSULTORIO: SERVICIOS
+# C1TURNO: TURNO
+# C1SEX: SEXO
+# C1EDAD: EDAD
+# C2P1: ¿CUÁL ES SU PROFESIÓN?
+# C2P5: ¿CUÁL ES SU ESTADO CIVIL O CONYUGAL?  
+# C2P6: LA VIVIENDA QUE OCUPA SU HOGAR ES
+# C2P7: ¿QUÉ TIPO DE CONTRATO TIENE CON ESTE ESTABLECIMIENTO DE SALUD?
+# C2P8: ACTUALMENTE, ¿UD. VIVE CON SU FAMILIA?
+# C2P9: ¿CUÁNTAS PERSONAS DEPENDEN ECONÓMICAMENTE DE UD.? #Discreto
+# C2P11: ¿EN QUÉ UNIVERSIDAD ESTUDIÓ SU CARRERA?  
+# C2P13: ¿TIENE ALGUNA ESPECIALIDAD?
+# C2P21: ¿CUÁNTOS AÑOS VIENE TRABAJANDO EN EL SECTOR SALUD, YA SEA PÚBLICO O PRIVADO? #Escala
+# C2P26: ¿REALIZA LABOR DOCENTE REMUNERADA?
+# C2P27: EN PROMEDIO, ¿CUÁNTAS HORAS TRABAJA A LA SEMANA EN TODAS SUS ACTIVIDADES REMUNERADAS?
+# C2P28: CONSIDERANDO TODAS SUS ACTIVIDADES REMUNERADAS, ¿CUÁL ES SU NIVEL DE INGRESO MENSUAL?
+# C2P30_1: RESPECTO A SU TRABAJO EN ESTE ESTABLECIMIENTO, ¿CÓMO CALIFICARÍA SU NIVEL DE SATISFACCIÓN EN CUANTO A: Posibilidades de promoción o ascenso?
+  
+dat_SUSALUD = subset(SUSALUD_2015, select=c(DEPARTAMENTO, PROVINCIA, INSTITUCION, C1CONSULTORIO,
+                                            C1TURNO, C1SEX, C1EDAD, C2P1, C2P5, C2P6, C2P7, C2P8, C2P9,
+                                            C2P11, C2P13, C2P21, C2P26, C2P27, C2P28, C2P30_1)) 
+
+head(dat_SUSALUD)
+summary(dat_SUSALUD)
+str(dat_SUSALUD)  
+
+library(Hmisc) # Libreria que contine la funcion describe
+describe(dat_SUSALUD)
+
+
+library(naniar) # Libreria de valores faltantes
+vis_miss(dat_SUSALUD)
+
+library(ggplot2)
+gg_miss_upset(dat_SUSALUD)
+gg_miss_var(dat_SUSALUD, show_pct=T)
+
+dat_SUSALUD$DEPARTAMENTO
+
+attach(dat_SUSALUD)
+DEPARTAMENTO
+
+
+## ----------------------------------------------------
+## Visualización de datos
+## ----------------------------------------------------
+
+
+#### -------------------------
+#### GRAFICOS UNIVARIADOS
+## Variables cualitativas
+
+library(gmodels) ## Libreria para datos categoricos
+
+CrossTable(DEPARTAMENTO)
+barplot(table(DEPARTAMENTO), cex.names=0.6, las=2)
+
+CrossTable(C2P1)
+barplot(table(C2P1), cex.names=0.8, las=1)
+
+CrossTable(INSTITUCION)
+barplot(table(INSTITUCION), cex.names=0.6, las=1)
+
+CrossTable(C1TURNO)
+barplot(table(C1TURNO), cex.names=0.6, las=1)
+
+CrossTable(C2P28)
+barplot(table(C2P28), cex.names=0.6, las=2)
+
+pcat = prop.table(table(C2P28))*100
+barplot(pcat, cex.names=0.6, las=2)
+
+
+## Variables cualitativas DISCRETA
+p_disc = prop.table(table(C2P9))*100
+plot(p_disc)
+
+## Variables cualitativas CONTINUA
+hist(C2P21, col="blue")
+
+library(agricolae)
+tab = table.freq(object=hist(C2P21))
+
+p = boxplot(C2P21, plot=F)
+  
+
+
+
+#### -------------------------
+#### GRAFICOS BIVARIADOS
+
+##  Categorico VS Categorico
+p1 = table(C1TURNO, C2P1)
+barplot(p1, legend=T, beside=F) ## Diagrama de barras apiladas (Stacked bar chart)
+barplot(p1, legend=T, beside=T) ## Diagrama de barras agrupadas (Grouped bar chart)
+
+margin.table(p1, 1)
+margin.table(p1, 2)
+
+p2 = prop.table(p1, 2)
+barplot(p2, legend=T) ## Diagrama de barras segmentadas (Segmented bar chart)
+
+
+## Categorico VS Cuantitativas
+C2P21[C2P1=="Enfermero/a"]
+C2P21[C2P1=="Médico"]
+
+p1 = hist(C2P21[C2P1=="Enfermero/a"])
+p2 = hist(C2P21[C2P1=="Médico"], col="red")
+plot(p1, col="blue")
+plot(p2, , col="red", add=T)
+
+boxplot(C2P21~C2P1, col=c("red", "blue"))
+
+
+
+## ---------------------------------------
+## GRAFICAS USANDO GGPLOT2
+## ---------------------------------------
+library(ggplot2)
+
+#### -------------------------
+#### GRAFICOS UNIVARIADOS
+## Variables cualitativas
+p = ggplot(dat_SUSALUD, aes(x=C2P1))+geom_bar(fill="coral3")
+
+
+p = ggplot(dat_SUSALUD, aes(x=C2P28))+geom_bar(fill="coral3")
+p + theme(axis.text.x=element_text(angle=45, vjust=0.6, size=7))  
+
+## Categorico vs Categorico
+p = ggplot(dat_SUSALUD, aes(x=C2P28, fill=C2P1))+geom_bar(position="stack")
+p = p + theme(axis.text.x=element_text(angle=45, vjust=0.6, size=7)) 
+p + labs(x="Escalas de sueldos", y="Cantidad de encuestados", fill="Carrera", title="Diagrama de barras")
+
+
+p = ggplot(dat_SUSALUD, aes(x=C2P28, fill=C2P1))+geom_bar(position="dodge")
+p + theme(axis.text.x=element_text(angle=45, vjust=0.6, size=7))
+
+
+p = ggplot(dat_SUSALUD, aes(x=C2P28, fill=C2P1))+geom_bar(position="fill")
+p + theme(axis.text.x=element_text(angle=45, vjust=0.6, size=7)) 
+
+
+chisq.test(table(C2P28, C2P1)) 
+
+
+## Cuantitativo continuo
+ggplot(dat_SUSALUD, aes(x=C2P21)) + geom_histogram(fill="coral3", col="black")
+
+ggplot(dat_SUSALUD, aes(y=C2P21)) + geom_boxplot()
+
+## Cuantitativo VS cualitativo
+ggplot(dat_SUSALUD, aes(x=C2P21, fill=C2P1)) + geom_histogram(col="black")
+
+ggplot(dat_SUSALUD, aes(y=C2P21, fill=C2P1)) + geom_boxplot()
+
